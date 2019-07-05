@@ -1,0 +1,68 @@
+[root@testhost process_down_test]# docker pull yonedakenji/process_down_test_only_httpd
+Using default tag: latest
+Trying to pull repository registry.access.redhat.com/yonedakenji/process_down_test_only_httpd ...
+Pulling repository registry.access.redhat.com/yonedakenji/process_down_test_only_httpd
+Trying to pull repository docker.io/yonedakenji/process_down_test_only_httpd ...
+latest: Pulling from docker.io/yonedakenji/process_down_test_only_httpd
+c6fb3d2c9cb8: Already exists
+391d13e4ad83: Pull complete
+3a30b3d44059: Pull complete
+c86af68c9fd7: Pull complete
+cbcad85b5e2e: Pull complete
+6fa1d9bf8d37: Pull complete
+d98b5c6f60d2: Pull complete
+2c2b7f913134: Pull complete
+9fdc4117f605: Pull complete
+01e6753b414c: Pull complete
+0f67773935af: Pull complete
+69960dd0ff10: Pull complete
+a211ad12d7a4: Pull complete
+c7a223fb26ad: Pull complete
+d2aba3058b51: Pull complete
+Digest: sha256:861a4425974282558bd43263344e69694d1c77ebae6aa78bced0fbd565a8d26f
+Status: Downloaded newer image for docker.io/yonedakenji/process_down_test_only_httpd:latest
+[root@testhost process_down_test]# docker run --name only_httpd --hostname only_httpd -itd yonedakenji/process_down_test_only_httpd
+5ad150fa77858d2f22f3ead6217497f79917db30b04f72eb4a92934fdaf306da
+[root@testhost process_down_test]# docker exec -it only_httpd /bin/bash
+[root@only_httpd MW]# touch somefile
+[root@only_httpd MW]# exit
+[root@testhost process_down_test]# docker stop only_httpd
+only_httpd
+[root@testhost process_down_test]# docker commit only_httpd yonedakenji/process_down_test_only_httpd:commited
+sha256:adbc38eb00547f8d031c1c20c2e80568e711a99a4d9e501153c1c8e10cadbbee
+[root@testhost process_down_test]# docker run --name only_httpd_01 --hostname only_httpd_01 -itd yonedakenji/process_down_test_only_httpd:commited
+85ceb517e8f1fc6c98979b2127bcd6760267890ac812ea57c4fd7b8ab4eda810
+[root@testhost process_down_test]# docker run --name only_httpd_02 --hostname only_httpd_02 -itd yonedakenji/process_down_test_only_httpd:commited
+78f6680b27ecdb2b7c25d7dd6bd5fc4d0a9d2afc0853602c108ffb0946945718
+[root@testhost process_down_test]# ./process_down_test_only_httpd.sh
+2019”N  7ŒŽ  5“ú ‹à—j“ú 14:46:15 JST
+COUNT:1
+docker stop only_httpd_02
+only_httpd_02
+docker_top_check only_httpd_01
+only_httpd_01 httpd -DNO_DETACH:6
+docker start only_httpd_02
+only_httpd_02
+2019”N  7ŒŽ  5“ú ‹à—j“ú 14:46:26 JST
+COUNT:2
+docker stop only_httpd_02
+only_httpd_02
+docker_top_check only_httpd_01
+only_httpd_01 httpd -DNO_DETACH:0
+exit
+[root@testhost process_down_test]# docker logs --details --timestamps only_httpd_01
+2019-07-05T05:42:23.083619000Z  *** Booting runit daemon...
+2019-07-05T05:42:23.084009000Z  *** Runit started as PID 6
+2019-07-05T05:42:23.095802000Z  httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2 for ServerName
+[root@testhost process_down_test]# docker logs --details --timestamps only_httpd_02
+2019-07-05T05:42:31.261242000Z  *** Booting runit daemon...
+2019-07-05T05:42:31.261870000Z  *** Runit started as PID 6
+2019-07-05T05:42:31.273864000Z  httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.3 for ServerName
+2019-07-05T05:46:15.833450000Z  *** Shutting down runit daemon (PID 6)...
+2019-07-05T05:46:15.838355000Z  *** Init system aborted.
+2019-07-05T05:46:15.838663000Z  *** Killing all processes...
+2019-07-05T05:46:16.527993000Z  *** Booting runit daemon...
+2019-07-05T05:46:16.528350000Z  *** Runit started as PID 6
+2019-07-05T05:46:16.539102000Z  httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.3 for ServerName
+2019-07-05T05:46:32.013905000Z  *** Shutting down runit daemon (PID 6)...
+[root@testhost process_down_test]#
