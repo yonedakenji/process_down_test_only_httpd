@@ -21,7 +21,7 @@ function docker_top_check {
 #    echo "$1 mysql_exist * tomcat_exist * httpd_exist:$((mysql_exist * tomcat_exist * httpd_exist))"
 
 #    if [ $((mysql_exist * tomcat_exist * httpd_exist)) -eq 0 ]; then
-#    if [ httpd_exist -eq 0 ]; then
+    if [ $httpd_exist -eq 0 ]; then
         echo "exit"
         exit -1
     fi
