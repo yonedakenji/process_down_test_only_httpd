@@ -1,5 +1,5 @@
-TARGET_CONTAINER=process_down_test_01
-RESTART_CONTAINER=process_down_test_02
+TARGET_CONTAINER=only_httpd_01
+RESTART_CONTAINER=only_httpd_02
 COUNT=100
 
 # check ps output.
